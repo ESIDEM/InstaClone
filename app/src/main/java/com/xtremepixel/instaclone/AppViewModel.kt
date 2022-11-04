@@ -33,6 +33,10 @@ class AppViewModel @Inject constructor(
     }
 
     fun onSignUp(userName: String, email: String, password: String) {
+        if (userName.isEmpty() or email.isEmpty() or password.isEmpty()){
+            handleException(customMessage = "Please fill all fields")
+            return
+        }
         inProgress.value = true
 
         fireStore.collection(USERS).whereEqualTo("username", userName).get()
@@ -58,6 +62,33 @@ class AppViewModel @Inject constructor(
 
             }.addOnFailureListener {
                 handleException(it, "Could not create User")
+            }
+    }
+
+    fun onLogin(email: String, password: String){
+        if (email.isEmpty() or  password.isEmpty()){
+            handleException(customMessage = "Please fill all field")
+            return
+        }
+        inProgress.value = true
+
+        auth.signInWithEmailAndPassword(email, password)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful){
+                    isSignIn.value = true
+                    inProgress.value = false
+                    auth.currentUser?.uid?.let {
+                        getUserData(it)
+                    }
+                }else {
+                    handleException(task.exception, "Login Failed")
+                    inProgress.value = false
+                }
+
+            }
+            .addOnFailureListener {
+                handleException(it, "Login Failed")
+                inProgress.value = false
             }
     }
 

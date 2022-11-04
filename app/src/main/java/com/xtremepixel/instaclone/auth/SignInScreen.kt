@@ -5,8 +5,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.*
-import com.xtremepixel.instaclone.R
+import androidx.compose.material.Button
+import androidx.compose.material.OutlinedTextField
+import androidx.compose.material.Text
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -23,29 +25,24 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.xtremepixel.instaclone.AppViewModel
 import com.xtremepixel.instaclone.DestinationScreens
+import com.xtremepixel.instaclone.R
 import com.xtremepixel.instaclone.utils.CheckSignIn
 import com.xtremepixel.instaclone.utils.ProgressSpinner
 import com.xtremepixel.instaclone.utils.navigateTo
 
 @Composable
-fun SignUpScreen(navController: NavController, viewModel: AppViewModel) {
-
+fun SignInScreen(navController: NavController, viewModel: AppViewModel){
     CheckSignIn(vm = viewModel, navController = navController )
     val focus = LocalFocusManager.current
     Box(modifier = Modifier.fillMaxSize()) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .wrapContentHeight()
-                .verticalScroll(
-                    rememberScrollState()
-                ),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
+        Column(modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .verticalScroll(
+                rememberScrollState()
+            ),
+            horizontalAlignment = Alignment.CenterHorizontally) {
 
-            val userNameState = remember {
-                mutableStateOf(TextFieldValue())
-            }
             val emailState = remember {
                 mutableStateOf(TextFieldValue())
             }
@@ -62,21 +59,11 @@ fun SignUpScreen(navController: NavController, viewModel: AppViewModel) {
                     .padding(8.dp)
             )
             Text(
-                text = "Sign Up",
+                text = "Sign In",
                 modifier = Modifier.padding(8.dp),
                 fontSize = 30.sp,
                 fontFamily = FontFamily.SansSerif
             )
-
-            OutlinedTextField(
-                value = userNameState.value,
-                onValueChange = { userNameState.value = it },
-                modifier = Modifier.padding(8.dp), label = { Text(text = "Username") },
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    unfocusedBorderColor = Color.LightGray,
-                unfocusedLabelColor = Color.LightGray)
-            )
-
             OutlinedTextField(
                 value = emailState.value,
                 onValueChange = { emailState.value = it },
@@ -97,26 +84,24 @@ fun SignUpScreen(navController: NavController, viewModel: AppViewModel) {
             )
 
             Button(onClick = {
-                focus.clearFocus(force = true)
-                             viewModel.onSignUp(
-                                 userNameState.value.text,
-                                 emailState.value.text,
-                                 passwordState.value.text
-                             )
+                             focus.clearFocus(force = true)
+                viewModel.onLogin(emailState.value.text, passwordState.value.text)
             }, modifier = Modifier.padding(8.dp)) {
-                Text(text = "Sign Up")
+                Text(text = "Login")
 
             }
-
             Text(
-                text = "Already have an account?",
+                text = "New here? Crete an account",
                 color = Color.Blue,
                 modifier = Modifier
                     .padding(8.dp)
                     .clickable {
-                        navigateTo(navController, DestinationScreens.Login)
+                        navigateTo(navController, DestinationScreens.SignUp)
                     })
         }
+
         if (viewModel.inProgress.value) ProgressSpinner()
+
     }
+
 }

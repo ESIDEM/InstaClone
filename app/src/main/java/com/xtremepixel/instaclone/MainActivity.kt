@@ -14,6 +14,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.xtremepixel.instaclone.auth.SignInScreen
 import com.xtremepixel.instaclone.auth.SignUpScreen
 import com.xtremepixel.instaclone.ui.theme.InstaCloneTheme
 import com.xtremepixel.instaclone.utils.ShowNotificationMessage
@@ -33,7 +34,9 @@ class MainActivity : ComponentActivity() {
 }
 
 sealed class DestinationScreens(val route:String){
-    object signUp: DestinationScreens("signup")
+    object SignUp: DestinationScreens("signup")
+    object Login: DestinationScreens("login")
+    object Feed: DestinationScreens("feed")
 }
 
 @Composable
@@ -42,9 +45,17 @@ fun InstaCloneMainApp(){
     val navController = rememberNavController()
 
     ShowNotificationMessage(vm = vm)
-    NavHost(navController = navController, startDestination = DestinationScreens.signUp.route){
-        composable(DestinationScreens.signUp.route){
+    NavHost(navController = navController, startDestination = DestinationScreens.SignUp.route){
+        composable(DestinationScreens.SignUp.route){
             SignUpScreen(navController = navController, viewModel = vm )
+        }
+
+        composable(DestinationScreens.Login.route){
+            SignInScreen(navController = navController, viewModel = vm)
+        }
+
+        composable(DestinationScreens.Feed.route){
+            FeedScreen(navController = navController, viewModel = vm )
         }
     }
 }
