@@ -10,34 +10,50 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.xtremepixel.instaclone.auth.SignUpScreen
 import com.xtremepixel.instaclone.ui.theme.InstaCloneTheme
+import com.xtremepixel.instaclone.utils.ShowNotificationMessage
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             InstaCloneTheme {
                 // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colors.background
-                ) {
-                    Greeting("Android")
-                }
+                InstaCloneMainApp()
             }
         }
     }
 }
 
-@Composable
-fun Greeting(name: String) {
-    Text(text = "Hello $name!")
+sealed class DestinationScreens(val route:String){
+    object signUp: DestinationScreens("signup")
 }
+
+@Composable
+fun InstaCloneMainApp(){
+    val vm = hiltViewModel<AppViewModel>()
+    val navController = rememberNavController()
+
+    ShowNotificationMessage(vm = vm)
+    NavHost(navController = navController, startDestination = DestinationScreens.signUp.route){
+        composable(DestinationScreens.signUp.route){
+            SignUpScreen(navController = navController, viewModel = vm )
+        }
+    }
+}
+
 
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
     InstaCloneTheme {
-        Greeting("Android")
+        InstaCloneMainApp()
     }
 }
